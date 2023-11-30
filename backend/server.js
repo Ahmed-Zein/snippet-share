@@ -19,8 +19,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.post("/signup", auth.singup);
 app.post("/signin", auth.singin);
 
-app.use("/api", auth.protect);
 app.use("/api", snippet);
+
+app.use("/share", snippet);
 
 module.exports = async () =>
   mongoose.connect(process.env.mongoUri).then((result) => {

@@ -19,16 +19,11 @@ exports.verifyToken = (token) =>
 exports.singup = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
-
-  if (password != confirmPassword) {
-    res.status = 400;
-    res.send({ message: "passwords doesn't match" });
-  }
+  const name = req.body.name;
 
   const alreadyExists = await User.findOne({ email: email }).exec();
   if (alreadyExists) {
-    return res.send({ message: "user already exists" });
+    return res.status(400).send({ message: "user already exists" });
   }
 
   try {
@@ -36,6 +31,7 @@ exports.singup = async (req, res) => {
     if (!hashedPassword) throw Error("server error");
 
     const user = await User.create({
+      name: name,
       email: email,
       password: hashedPassword,
       snippets: [],
@@ -57,22 +53,23 @@ exports.singin = async (req, res, next) => {
     .exec();
 
   if (!user) {
-    return res.send({ message: "email not exist" });
+    return res.status(401).send({ message: "email not exist" });
   }
 
   const isCorrectPassword = await bcrypt.compare(password, user.password);
   if (!isCorrectPassword) {
-    return res.send({ message: "wrong password" });
+    return res.status(401).send({ message: "wrong password" });
   }
   const token = this.newToken(user);
 
-  res.send({ token });
+  res.status(200).send({ token });
 };
 
 exports.protect = async (req, res, next) => {
   const bearer = req.headers.authorization;
-
+  
   if (!bearer || !bearer.startsWith("Bearer ")) {
+    console.error("jwtError");
     return res.status(401).end();
   }
 
