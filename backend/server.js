@@ -5,16 +5,12 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-// const router = require("./routes/router");
 const auth = require("./utils/auth");
-// const apiRouter = require("./routes/api");
+const snippet = require("./resources/snipppet/snippet.route");
 
 const app = express();
 
 app.disable("x-powered-by");
-
-// app.set("view engine", "ejs");
-// app.set("views", "views");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -24,11 +20,7 @@ app.post("/signup", auth.singup);
 app.post("/signin", auth.singin);
 
 app.use("/api", auth.protect);
-// app.use("/api", apiRouter);
-
-// app.get("/", (req, res, err) => {
-//   res.send("dd");
-// });
+app.use("/api", snippet);
 
 module.exports = async () =>
   mongoose.connect(process.env.mongoUri).then((result) => {
