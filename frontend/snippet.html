@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/">SnippetShare</a></h1>
+    </header>
+
+    <nav>
+      <a href="index.html" class="live"> Home </a>
+
+      <a href="snippet.html"> New snippet </a>
+      <form id="logout" action="/user/logout" method="POST">
+        <button>Logout</button>
+      </form>
+    </nav>
+    <section>
+      <form id="snippetForm">
+        <div>
+          <label>Title:</label>
+          <input type="text" name="title" value="" />
+        </div>
+        <div>
+          <label>Content:</label>
+          <textarea name="content"></textarea>
+        </div>
+        <div>
+          <label>Delete in:</label>
+          <input type="radio" name="expires" value="31536000" /> One Year
+          <input type="radio" name="expires" value="86400" /> One Day
+          <input type="radio" name="expires" value="3600" /> One Hour
+        </div>
+        <div>
+          <input type="submit" value="Publish snippet" />
+        </div>
+      </form>
+    </section>
+  </body>
+  <script src="./node_modules/axios/dist/axios.min.js"></script>
+  <script src="./js/snippet.js"></script>
+</html>

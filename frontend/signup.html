@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>signup</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/">SnippetShare</a></h1>
+    </header>
+
+    <nav>
+      <a href="index.html"> Home </a>
+      <a href="/snippet/new"> New snippet </a>
+      <a href="login.html" class="live"> Login </a>
+      <a href="signup.html"> Signup </a>
+    </nav>
+
+    <section>
+      <form id="singupForm">
+        <div>
+          <label>Name:</label>
+          <input type="text" id="name" value="" />
+        </div>
+        <div>
+          <label>Email:</label>
+          <input type="email" id="email" value="" />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input type="password" id="password" />
+        </div>
+        <div>
+          <input type="submit" value="Signup" />
+        </div>
+      </form>
+    </section>
+  </body>
+  <script src="./node_modules/axios/dist/axios.min.js"></script>
+  <script src="./js/signup.js"></script>
+</html>

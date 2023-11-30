@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>snippet share</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/">SnippetShare</a></h1>
+    </header>
+
+    <nav>
+      <a href="index.html" class="live"> Home </a>
+
+      <a href="snippet.html"> New snippet </a>
+      <form id="logoutForm" >
+        <button>Logout</button>
+      </form>
+    </nav>
+
+    <section>
+      <table id="snippetTable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </body>
+  <script src="./node_modules/axios/dist/axios.min.js"></script>
+  <script src="./js/home.js"></script>
+</html>
