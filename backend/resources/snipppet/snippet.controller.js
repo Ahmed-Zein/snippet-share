@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Snippet = require("./snippet.model");
 
 exports.getAll = async (req, res) => {
@@ -9,9 +10,13 @@ exports.getAll = async (req, res) => {
 };
 
 exports.getOne = async (req, res) => {
-  const snippetId = req.params.id;
+  const snippetId = req.query.id;
+  console.log(req.query);
+
   try {
-    const snippet = await Snippet.findOne({ _id: snippetId })
+    const snippet = await Snippet.findOne({
+      _id: snippetId,
+    })
       .select("title content createdAt")
       .exec();
     res.status(200).send({ snippet });

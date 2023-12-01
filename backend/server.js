@@ -7,6 +7,8 @@ const cors = require("cors");
 
 const auth = require("./utils/auth");
 const snippet = require("./resources/snipppet/snippet.route");
+const controller = require("./resources/snipppet/snippet.controller");
+const protect = require("./utils/auth").protect;
 
 const app = express();
 
@@ -21,7 +23,6 @@ app.post("/signin", auth.singin);
 
 app.use("/api", snippet);
 
-app.use("/share", snippet);
 
 module.exports = async () =>
   mongoose.connect(process.env.mongoUri).then((result) => {
