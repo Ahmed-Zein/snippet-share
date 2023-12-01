@@ -1,4 +1,3 @@
-
 const snippetForm = document.getElementById("snippetForm");
 snippetForm.addEventListener("submit", submitForm);
 
@@ -30,7 +29,7 @@ async function submitForm(event) {
       }
     );
     console.log(response.status);
-    // window.location.href = "index.html";
+    window.location.href = "index.html";
   } catch (e) {
     console.error(e);
   }

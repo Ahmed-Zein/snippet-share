@@ -5,11 +5,11 @@ const protect = require("../../utils/auth").protect;
 
 const router = express.Router();
 
+router.get("/share/", controller.getOne);
+
 router.get("/", protect, controller.getAll);
 
 router.post("/create", protect, controller.addOne);
 // router.delete()
-
-router.get("/:id", protect, controller.getOne);
 
 module.exports = router;
