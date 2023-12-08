@@ -11,13 +11,13 @@ exports.getAll = async (req, res) => {
 
 exports.getOne = async (req, res) => {
   const snippetId = req.query.id;
-  console.log(req.query);
+  // console.log(req.query);
 
   try {
     const snippet = await Snippet.findOne({
       _id: snippetId,
     })
-      .select("title content createdAt")
+      // .select("title content createdAt")
       .exec();
     res.status(200).send({ snippet });
   } catch (e) {
@@ -27,17 +27,15 @@ exports.getOne = async (req, res) => {
 };
 
 exports.addOne = async (req, res, err) => {
-  console.log(req.body);
-  const currentDate = new Date();
-
-  const expiresTime = new Date(currentDate.getTime() + req.body.expires * 1000);
+  // console.log(req.body);
   try {
     const snippet = await Snippet.create({
       title: req.body.title,
       content: req.body.content,
-      expireTime: expiresTime,
+      expiresAt: new Date(Date.now() + req.body.expires * 1000),
       userId: req.user._id,
     });
+
     return res.send({ snippet: snippet });
   } catch (e) {
     console.error(e);
