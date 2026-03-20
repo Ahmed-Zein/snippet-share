@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SnippetShareApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SnippetShareApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SnippetShareApplication.class, args);
+    }
 
 }
