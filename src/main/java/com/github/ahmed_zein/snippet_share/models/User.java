@@ -29,6 +29,10 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AppRoles role;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

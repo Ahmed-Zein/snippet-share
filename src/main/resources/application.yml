@@ -9,12 +9,16 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
+jwt:
+  secret: a-random-long-and-strong-secret-key
+  expiration: 86400000  # 24 hours in milliseconds
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
