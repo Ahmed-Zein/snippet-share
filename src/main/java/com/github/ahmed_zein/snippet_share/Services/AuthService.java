@@ -5,7 +5,7 @@ import com.github.ahmed_zein.snippet_share.dto.LoginRequest;
 import com.github.ahmed_zein.snippet_share.dto.SignupRequest;
 import com.github.ahmed_zein.snippet_share.models.AppRoles;
 import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
-import com.github.ahmed_zein.snippet_share.models.User;
+import com.github.ahmed_zein.snippet_share.models.AppUser;
 import com.github.ahmed_zein.snippet_share.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +23,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(SignupRequest request) {
-        var user = User.builder().name(request.name()).email(request.email()).password(passwordEncoder.encode(request.password())).role(AppRoles.USER).build();
+        var user = AppUser.builder().name(request.name()).email(request.email()).password(passwordEncoder.encode(request.password())).role(AppRoles.USER).build();
 
         userRepository.save(user);
 

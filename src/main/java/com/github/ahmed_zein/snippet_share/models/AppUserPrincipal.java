@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 
 // Wrapper that adapts AppUser to UserDetails
-public record AppUserPrincipal(User user) implements UserDetails {
+public record AppUserPrincipal(AppUser user) implements UserDetails {
     @Override
     public List<SimpleGrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(user.getRole().name()));

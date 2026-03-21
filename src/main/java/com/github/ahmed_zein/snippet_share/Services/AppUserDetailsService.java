@@ -1,7 +1,7 @@
 package com.github.ahmed_zein.snippet_share.Services;
 
 import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
-import com.github.ahmed_zein.snippet_share.models.User;
+import com.github.ahmed_zein.snippet_share.models.AppUser;
 import com.github.ahmed_zein.snippet_share.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
@@ -17,7 +17,7 @@ public class AppUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
         return new AppUserPrincipal(user);
     }
 }
