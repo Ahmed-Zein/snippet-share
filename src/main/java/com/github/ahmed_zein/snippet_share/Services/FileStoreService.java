@@ -1,4 +1,9 @@
 package com.github.ahmed_zein.snippet_share.Services;
 
-public class FileStoreService {
+import java.io.InputStream;
+
+public interface FileStoreService {
+    void save(String path, String fileName, InputStream inputStream);
+
+    byte[] download(String path, String key);
 }

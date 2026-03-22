@@ -1,7 +1,7 @@
 package com.github.ahmed_zein.snippet_share.Services;
 
-import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
 import com.github.ahmed_zein.snippet_share.models.AppUser;
+import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
 import com.github.ahmed_zein.snippet_share.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;

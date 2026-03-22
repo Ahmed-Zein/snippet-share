@@ -36,7 +36,7 @@ public class AppUser {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private List<AppFile> files = new ArrayList<>();
 
     @PrePersist
