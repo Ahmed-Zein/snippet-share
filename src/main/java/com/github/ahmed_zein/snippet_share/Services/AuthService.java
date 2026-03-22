@@ -6,7 +6,7 @@ import com.github.ahmed_zein.snippet_share.dto.SignupRequest;
 import com.github.ahmed_zein.snippet_share.models.AppRoles;
 import com.github.ahmed_zein.snippet_share.models.AppUser;
 import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
-import com.github.ahmed_zein.snippet_share.repositories.UserRepository;
+import com.github.ahmed_zein.snippet_share.repositories.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -25,20 +25,24 @@ public class AuthService {
     public AuthResponse register(SignupRequest request) {
         var user = AppUser.builder().name(request.name()).email(request.email()).password(passwordEncoder.encode(request.password())).role(AppRoles.USER).build();
 
-        userRepository.save(user);
+        appUserRepository.save(user);
 
         var jwt = jwtService.generateToken(new AppUserPrincipal(user));
 
-        return AuthResponse.builder().token(jwt).build();
+        return AuthResponse.builder()
+                .userId(user.getId())
+                .token(jwt).build();
     }
 
     public AuthResponse authenticate(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
-        var user = userRepository.findByEmailIgnoreCase(request.email()).orElseThrow();
+        var user = appUserRepository.findByEmailIgnoreCase(request.email()).orElseThrow();
 
         var jwt = jwtService.generateToken(new AppUserPrincipal(user));
 
-        return AuthResponse.builder().token(jwt).build();
+        return AuthResponse.builder()
+                .userId(user.getId())
+                .token(jwt).build();
     }
 }

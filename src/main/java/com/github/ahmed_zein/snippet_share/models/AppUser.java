@@ -44,5 +44,8 @@ public class AppUser {
         this.createdAt = LocalDateTime.now();
     }
 
+    public boolean addFile(AppFile file) {
+        return this.files.add(file);
+    }
 }
 

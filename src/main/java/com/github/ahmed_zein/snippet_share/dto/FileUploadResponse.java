@@ -5,15 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-    private UUID userId;
-    private String token;
-    @Builder.Default
-    private String tokenType = "Bearer: ";
+public class FileUploadResponse {
+    private String fileName;
+    private String fileType;
+    private long fileSize;
+    private String url;
+    private boolean success;
+    private String errorMessage;
+
 }

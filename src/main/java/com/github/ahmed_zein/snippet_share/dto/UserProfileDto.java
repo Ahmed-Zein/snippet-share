@@ -5,15 +5,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-    private UUID userId;
-    private String token;
-    @Builder.Default
-    private String tokenType = "Bearer: ";
+public class UserProfileDto {
+    private UUID id;
+
+    private String email;
+
+    private String name;
+
+    private List<AppFileDto> files = new ArrayList<>();
 }
+
