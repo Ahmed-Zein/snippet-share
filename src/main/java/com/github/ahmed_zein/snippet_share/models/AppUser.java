@@ -36,6 +36,7 @@ public class AppUser {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private List<AppFile> files = new ArrayList<>();
 

@@ -1,6 +1,7 @@
 package com.github.ahmed_zein.snippet_share.controllers;
 
 import com.github.ahmed_zein.snippet_share.Services.AuthService;
+import com.github.ahmed_zein.snippet_share.dto.ApiResponse;
 import com.github.ahmed_zein.snippet_share.dto.AuthResponse;
 import com.github.ahmed_zein.snippet_share.dto.LoginRequest;
 import com.github.ahmed_zein.snippet_share.dto.SignupRequest;
@@ -20,12 +21,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/singup")
-    public ResponseEntity<AuthResponse> signup(@Valid @RequestBody SignupRequest req) {
-        return new ResponseEntity<>(authService.register(req), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<AuthResponse>> signup(@Valid @RequestBody SignupRequest req) {
+        return new ResponseEntity<>(ApiResponse.ok(authService.register(req)), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
-        return new ResponseEntity<>(authService.authenticate(req), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest req) {
+        return new ResponseEntity<>(ApiResponse.ok(authService.authenticate(req)), HttpStatus.OK);
     }
 }

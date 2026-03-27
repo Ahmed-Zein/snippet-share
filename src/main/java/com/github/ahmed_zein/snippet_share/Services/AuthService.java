@@ -1,5 +1,6 @@
 package com.github.ahmed_zein.snippet_share.Services;
 
+import com.github.ahmed_zein.snippet_share.dto.AppUserDto;
 import com.github.ahmed_zein.snippet_share.dto.AuthResponse;
 import com.github.ahmed_zein.snippet_share.dto.LoginRequest;
 import com.github.ahmed_zein.snippet_share.dto.SignupRequest;
@@ -30,7 +31,10 @@ public class AuthService {
         var jwt = jwtService.generateToken(new AppUserPrincipal(user));
 
         return AuthResponse.builder()
-                .userId(user.getId())
+                .user(AppUserDto.builder()
+                        .id(user.getId()).email(user.getEmail()).name(user.getName())
+                        .build()
+                )
                 .token(jwt).build();
     }
 
@@ -42,7 +46,10 @@ public class AuthService {
         var jwt = jwtService.generateToken(new AppUserPrincipal(user));
 
         return AuthResponse.builder()
-                .userId(user.getId())
+                .user(AppUserDto.builder()
+                        .id(user.getId()).email(user.getEmail()).name(user.getName())
+                        .build()
+                )
                 .token(jwt).build();
     }
 }
