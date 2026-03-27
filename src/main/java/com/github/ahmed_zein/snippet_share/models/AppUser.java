@@ -31,7 +31,8 @@ public class AppUser {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private AppRoles role;
+    @Builder.Default
+    private AppRoles role= AppRoles.USER;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
