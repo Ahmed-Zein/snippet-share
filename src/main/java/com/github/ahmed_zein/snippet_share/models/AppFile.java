@@ -2,6 +2,7 @@ package com.github.ahmed_zein.snippet_share.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -49,6 +50,17 @@ public class AppFile {
     private boolean isDeleted = false;
 
     private LocalDateTime deletedAt;
+
+    public static AppFile fromFile(MultipartFile file, AppUser user) {
+        return AppFile.builder()
+                .appUser(user)
+                .originalFileName(file.getOriginalFilename())
+                .contentType(file.getContentType())
+                .size(file.getSize())
+                .checksum("TODO")
+                .path(UUID.randomUUID() + "TODO")
+                .build();
+    }
 
     @PrePersist
     public void onCreate() {

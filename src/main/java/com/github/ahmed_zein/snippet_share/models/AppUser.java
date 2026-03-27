@@ -32,7 +32,7 @@ public class AppUser {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private AppRoles role= AppRoles.USER;
+    private AppRoles role = AppRoles.USER;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

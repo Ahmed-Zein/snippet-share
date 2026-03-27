@@ -19,8 +19,7 @@ public class LocalFileStoreService implements FileStoreService {
     @Override
     public FileUploadResponse save(UUID userId, MultipartFile file) {
         var user = appUserRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
-        var appFile = AppFile.builder().appUser(user).originalFileName(file.getOriginalFilename())
-                .contentType(file.getContentType()).size(file.getSize()).checksum("TODO").path(UUID.randomUUID() + "TODO").build();
+        var appFile = AppFile.fromFile(file, user);
         user.addFile(appFile);
         appUserRepository.save(user);
         return FileUploadResponse.builder().success(true).fileType(appFile.getContentType()).fileName(appFile.getOriginalFileName()).url(appFile.getPath()).build();
