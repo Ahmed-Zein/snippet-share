@@ -1,7 +1,8 @@
 package com.github.ahmed_zein.snippet_share.Services;
 
-import com.github.ahmed_zein.snippet_share.dto.AppFileDto;
 import com.github.ahmed_zein.snippet_share.dto.UserProfileDto;
+import com.github.ahmed_zein.snippet_share.mappers.AppFileMapper;
+import com.github.ahmed_zein.snippet_share.mappers.AppUserMapper;
 import com.github.ahmed_zein.snippet_share.repositories.AppFileRepository;
 import com.github.ahmed_zein.snippet_share.repositories.AppUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ public class AppUserService {
 
     private final AppUserRepository appUserRepository;
     private final AppFileRepository appFileRepository;
+    private final AppUserMapper userMapper;
+    private final AppFileMapper fileMapper;
 
     public Optional<UserProfileDto> getUser(UUID id) {
         var userOptional = appUserRepository.findById(id);
@@ -23,20 +26,10 @@ public class AppUserService {
         var user = userOptional.get();
         var files = appFileRepository.findByAppUser(user);
 
-        // TODO: user map-struct
-        var profile = UserProfileDto.builder();
-        profile.id(user.getId());
-        profile.email(user.getEmail());
-        profile.name(user.getName());
-        profile.files(files.stream().map(appFile -> AppFileDto.builder()
-                .id(appFile.getId())
-                .accessed(appFile.getAccessed())
-                .createdAt(appFile.getCreatedAt())
-                .path(appFile.getPath())
-                .contentType(appFile.getContentType())
-                .originalFileName(appFile.getOriginalFileName())
-                .build()).toList());
+        var profile = userMapper.toProfileDto(user);
+        profile.setFiles(files.stream().map(fileMapper::toDto).toList());
 
-        return Optional.of(profile.build());
+
+        return Optional.of(profile);
     }
 }
