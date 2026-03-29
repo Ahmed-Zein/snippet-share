@@ -58,7 +58,7 @@ public class AppFile {
                 .contentType(file.getContentType())
                 .size(file.getSize())
                 .checksum("TODO")
-                .path(UUID.randomUUID() + "TODO")
+                .path(UUID.randomUUID() + file.getOriginalFilename())
                 .build();
     }
 

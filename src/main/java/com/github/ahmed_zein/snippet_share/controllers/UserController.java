@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +39,7 @@ public class UserController {
     )
     public ResponseEntity<List<FileUploadResponse>> uploadUserProfileImage(@PathVariable("userId") UUID userId,
                                                                            @AuthenticationPrincipal AppUserPrincipal currentUser,
-                                                                           @RequestParam("file") List<MultipartFile> files) {
+                                                                           @RequestParam("file") List<MultipartFile> files) throws IOException {
 
         if (!userId.equals(currentUser.user().getId())) {
             return ResponseEntity.badRequest().build();

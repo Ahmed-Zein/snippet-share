@@ -35,3 +35,4 @@ build/
 ### greybeast ###
 .greybeast/
 /data
+/upload/
