@@ -1,9 +1,15 @@
 import { CloudUpload } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function UploadPage() {
   const supportedFormats = [".MD", ".PDF", ".PNG", ".JPG", ".HTML"];
   const [enlarged, setEnlarged] = useState(false);
+
+  const handleupload = () => {
+    toast.success("File uploaded successfully!");
+  };
+
   return (
     <div className="flex w-full gap-10 items-start justify-between">
       {/* LEFT SIDE: DROP ZONE (Takes up more space) */}
@@ -58,7 +64,10 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 transition-colors">
+        <button
+          onClick={handleupload}
+          className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 transition-colors"
+        >
           UPLOAD
         </button>
       </div>

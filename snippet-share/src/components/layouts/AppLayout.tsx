@@ -21,7 +21,6 @@ import {
 
 function AppSidebar() {
   const { user } = useAuth();
-  console.log("AppLayout render", { user });
   return (
     <Sidebar>
       <SidebarHeader />
