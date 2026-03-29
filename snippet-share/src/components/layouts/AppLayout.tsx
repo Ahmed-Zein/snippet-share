@@ -1,5 +1,10 @@
 import { useAuth } from "@/features/auth/useAuth";
-import { LibraryBigIcon, UploadCloudIcon } from "lucide-react";
+import {
+  LibraryBigIcon,
+  LogOut,
+  UploadCloudIcon,
+  UserCircle,
+} from "lucide-react";
 import { Outlet } from "react-router";
 import {
   Sidebar,
@@ -58,12 +63,20 @@ function AppSidebar() {
 }
 
 export function AppLayout() {
+  const { logout } = useAuth();
   return (
     <SidebarProvider>
       <AppSidebar />
-      <div className="flex-1 p-4">
+      <main className="flex-1 justify-center items-start overflow-y-auto bg-surface-bright p-18">
+        <nav className="flex text-on-surface-variant  justify-end gap-x-12 m-0 pb-8">
+          <UserCircle />
+          <LogOut
+            className="hover:text-on-surface cursor-pointer"
+            onClick={logout}
+          />
+        </nav>
         <Outlet />
-      </div>
+      </main>
     </SidebarProvider>
   );
 }

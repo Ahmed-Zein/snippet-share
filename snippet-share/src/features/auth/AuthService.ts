@@ -21,4 +21,9 @@ export class AuthService {
 
     return data.data.user;
   }
+
+  async logout() {
+    AppStorage.remove(StorageKey.AUTH_TOKEN);
+    AppStorage.remove(StorageKey.USER_DATA);
+  }
 }

@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    AppStorage.remove(StorageKey.USER_DATA);
+    authService.logout();
   };
 
   return (
