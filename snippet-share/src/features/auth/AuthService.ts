@@ -1,5 +1,4 @@
 import apiClient from "../common/apiClient";
-import type ApiResponse from "../common/apiResponse";
 import AppStorage from "../common/storage";
 import StorageKey from "../common/storageKey";
 import type User from "../models/user";
@@ -7,7 +6,7 @@ import type AuthResponse from "./AuthResponse";
 
 export class AuthService {
   async login(email: string, password: string): Promise<User> {
-    const res = apiClient.post<ApiResponse<AuthResponse>>("/auth/login", {
+    const res = apiClient.post<AuthResponse>("/auth/login", {
       email,
       password,
     });

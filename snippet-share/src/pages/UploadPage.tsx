@@ -1,23 +1,57 @@
+import UploadService from "@/features/uploads/uploadService";
 import { CloudUpload } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-export default function UploadPage() {
-  const supportedFormats = [".MD", ".PDF", ".PNG", ".JPG", ".HTML"];
-  const [enlarged, setEnlarged] = useState(false);
+const supportedFormats = [".MD", ".PDF", ".PNG", ".JPG", ".HTML"];
 
-  const handleupload = () => {
-    toast.success("File uploaded successfully!");
+// TODO: Handle Drag & Drop functionality, file validation, and actual upload logic
+export default function UploadPage() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [enlarged, setEnlarged] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+
+  const handleupload = async () => {
+    const res = await UploadService.uploadFiles(files);
+    if (res.success) {
+      toast.success("Files uploaded successfully!");
+      setFiles([]); // Clear the queue after successful upload
+    } else {
+      toast.error(
+        `Upload failed: ${res.data.map((f) => f.errorMessage).join(", ")}`,
+      );
+    }
+  };
+
+  const handleInputClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
+
+  const handldFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = event.target.files;
+    if (selectedFiles) {
+      setFiles(Array.from(selectedFiles));
+    }
   };
 
   return (
-    <div className="flex w-full gap-10 items-start justify-between">
+    <div className="flex w-full gap-10 items-stretch justify-between">
       {/* LEFT SIDE: DROP ZONE (Takes up more space) */}
       <div
         className="flex-2 p-2 bg-surface-container-high hover:bg-surface-container-highest cursor-pointer transition-colors"
         onMouseEnter={() => setEnlarged(true)}
         onMouseLeave={() => setEnlarged(false)}
+        onClick={handleInputClick}
       >
+        <input
+          type="file"
+          multiple
+          className="hidden"
+          ref={inputRef}
+          onChange={handldFileChange}
+        />
         <div className="flex flex-col items-center justify-center gap-6 p-16 border-2 border-dashed border-primary-container">
           <CloudUpload
             className={`text-primary-container w-16 h-16 transition-transform duration-150 ${
@@ -41,7 +75,7 @@ export default function UploadPage() {
                 key={format}
                 className="bg-secondary-fixed-dim text-xs font-bold uppercase text-on-surface px-3 py-1"
               >
-                .{format}
+                {format}
               </span>
             ))}
           </div>
@@ -49,18 +83,26 @@ export default function UploadPage() {
       </div>
 
       {/* RIGHT SIDE: QUEUE & SETTINGS (Fixed width or flex-1) */}
-      <div className="flex-1 flex flex-col gap-8 h-full">
+      <div className="flex-1 flex flex-col gap-8 justify-between">
         <div className="flex flex-col gap-4">
           <h1 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant">
             Active Queue
           </h1>
           <div className="max-h-75 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
-            <div className="bg-white p-4 shadow-sm border-b-2 border-primary">
-              <p className="font-mono text-sm">Q3_financial_report.pdf</p>
-            </div>
-            <div className="bg-white p-4 shadow-sm border-b-2 border-primary">
-              <p className="font-mono text-sm">research_notes.md</p>
-            </div>
+            {files.length === 0 ? (
+              <p className="mt-2 text-sm text-on-surface-variant italic">
+                No files in the queue. Please add some documents to upload.
+              </p>
+            ) : (
+              files.map((file) => (
+                <div
+                  key={file.name}
+                  className="bg-white p-4 shadow-sm border-b-2 border-primary"
+                >
+                  <p className="font-mono text-sm">{file.name}</p>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

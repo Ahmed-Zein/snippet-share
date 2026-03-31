@@ -12,6 +12,7 @@ class AppStorage {
   static remove(key: StorageKey) {
     localStorage.removeItem(key);
   }
+
   static clear() {
     localStorage.clear();
   }
