@@ -2,6 +2,7 @@ package com.github.ahmed_zein.snippet_share.controllers;
 
 import com.github.ahmed_zein.snippet_share.Services.AppUserService;
 import com.github.ahmed_zein.snippet_share.Services.FileStoreService;
+import com.github.ahmed_zein.snippet_share.dto.ApiResponse;
 import com.github.ahmed_zein.snippet_share.dto.FileUploadResponse;
 import com.github.ahmed_zein.snippet_share.dto.UserProfileDto;
 import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
@@ -37,9 +38,9 @@ public class UserController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<FileUploadResponse>> uploadUserProfileImage(@PathVariable("userId") UUID userId,
-                                                                           @AuthenticationPrincipal AppUserPrincipal currentUser,
-                                                                           @RequestParam("file") List<MultipartFile> files) throws IOException {
+    public ResponseEntity<ApiResponse<List<FileUploadResponse>>> uploadUserProfileImage(@PathVariable("userId") UUID userId,
+                                                              @AuthenticationPrincipal AppUserPrincipal currentUser,
+                                                              @RequestParam("files") List<MultipartFile> files) throws IOException {
 
         if (!userId.equals(currentUser.user().getId())) {
             return ResponseEntity.badRequest().build();
@@ -49,7 +50,7 @@ public class UserController {
         }
         var response = fileStoreService.save(userId, files);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     @GetMapping("{userProfileId}/image/download")
