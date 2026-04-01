@@ -18,7 +18,9 @@ class ApiClient {
 
     const response = await fetch(url, {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${AppStorage.get(StorageKey.AUTH_TOKEN) || ""}`,
+      },
     });
 
     if (!response.ok) {

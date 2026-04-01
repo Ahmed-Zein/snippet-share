@@ -1,4 +1,4 @@
-import UploadService from "@/features/uploads/uploadService";
+import UserService from "@/features/services/uploadService";
 import { CloudUpload } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -12,7 +12,7 @@ export default function UploadPage() {
   const [files, setFiles] = useState<File[]>([]);
 
   const handleupload = async () => {
-    const res = await UploadService.uploadFiles(files);
+    const res = await UserService.uploadFiles(files);
     if (res.success) {
       toast.success("Files uploaded successfully!");
       setFiles([]); // Clear the queue after successful upload
