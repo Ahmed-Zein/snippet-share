@@ -3,6 +3,7 @@ package com.github.ahmed_zein.snippet_share.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
@@ -23,4 +24,12 @@ public class PublishedUrl {
     @OneToOne()
     @JoinColumn(nullable = false)
     private AppFile appFile;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

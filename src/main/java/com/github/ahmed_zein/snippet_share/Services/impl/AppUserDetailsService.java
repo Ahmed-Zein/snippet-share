@@ -1,4 +1,4 @@
-package com.github.ahmed_zein.snippet_share.Services;
+package com.github.ahmed_zein.snippet_share.Services.impl;
 
 import com.github.ahmed_zein.snippet_share.models.AppUser;
 import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
