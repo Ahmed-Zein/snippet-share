@@ -1,7 +1,7 @@
 package com.github.ahmed_zein.snippet_share.controllers;
 
+import com.github.ahmed_zein.snippet_share.Services.AppFileServices;
 import com.github.ahmed_zein.snippet_share.Services.AppUserService;
-import com.github.ahmed_zein.snippet_share.Services.FileStoreService;
 import com.github.ahmed_zein.snippet_share.dto.ApiResponse;
 import com.github.ahmed_zein.snippet_share.dto.FileUploadResponse;
 import com.github.ahmed_zein.snippet_share.dto.UserProfileDto;
@@ -23,38 +23,44 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final FileStoreService fileStoreService;
+    private final AppFileServices fileServices;
     private final AppUserService appUserService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserProfileDto> getUserData(@PathVariable UUID userId) {
+    public ResponseEntity<ApiResponse<UserProfileDto>> getUserData(@PathVariable UUID userId) {
         var usr = appUserService.getUser(userId);
-        return usr.map(ResponseEntity::ok)
+        return usr.<ResponseEntity<ApiResponse<UserProfileDto>>>map(
+                        userProfileDto -> ResponseEntity.ok(ApiResponse.ok(userProfileDto)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping(
-            path = "/{userId}/upload",
+            path = "/upload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<ApiResponse<List<FileUploadResponse>>> uploadUserProfileImage(@PathVariable("userId") UUID userId,
-                                                              @AuthenticationPrincipal AppUserPrincipal currentUser,
-                                                              @RequestParam("files") List<MultipartFile> files) throws IOException {
+    public ResponseEntity<ApiResponse<List<FileUploadResponse>>> uploadUserProfileImage(@AuthenticationPrincipal AppUserPrincipal currentUser,
+                                                                                        @RequestParam("files") List<MultipartFile> files) throws IOException {
 
-        if (!userId.equals(currentUser.user().getId())) {
-            return ResponseEntity.badRequest().build();
-        }
         if (files == null || files.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        var response = fileStoreService.save(userId, files);
+        var response = fileServices.save(currentUser.user().getId(), files);
 
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
-    @GetMapping("{userProfileId}/image/download")
-    public ResponseEntity<byte[]> downloadUserProfileImage(@PathVariable("userProfileId") UUID userProfileId) {
+    @DeleteMapping(path = "/files/{fileId}")
+    public ResponseEntity<Void> deleteFile(@PathVariable("fileId") UUID fileId, @AuthenticationPrincipal AppUserPrincipal currentUser) {
+        var deleted = fileServices.deleteFile(currentUser.user().getId(), fileId);
+        return deleted ?
+                ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
+    }
+
+
+    @PostMapping("/files/{fileId}/publish")
+    public ResponseEntity<byte[]> publishFile(@PathVariable("userProfileId") UUID userProfileId) {
         return ResponseEntity.internalServerError().build();
     }
 }

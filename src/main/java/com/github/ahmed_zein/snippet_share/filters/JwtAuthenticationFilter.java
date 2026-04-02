@@ -1,6 +1,7 @@
 package com.github.ahmed_zein.snippet_share.filters;
 
 import com.github.ahmed_zein.snippet_share.Services.JwtService;
+import com.github.ahmed_zein.snippet_share.config.SecurityProperties;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -25,6 +27,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTH_HEADER_PREFIX = "Bearer ";
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final SecurityProperties securityProperties;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        AntPathMatcher matcher = new AntPathMatcher();
+
+        return securityProperties.getWhitelist()
+                .stream()
+                .anyMatch(pattern -> matcher.match(pattern, path));
+    }
 
     @Override
     protected void doFilterInternal(
