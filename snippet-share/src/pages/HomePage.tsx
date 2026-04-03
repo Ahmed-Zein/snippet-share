@@ -1,6 +1,5 @@
-import { ProfilePage } from "./ProfilePage";
+import UploadPage from "./UploadPage";
 
 export default function HomePage() {
-  // return <UploadPage />;
-  return <ProfilePage />;
+  return <UploadPage />;
 }

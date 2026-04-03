@@ -1,9 +1,8 @@
 import UserService from "@/features/services/uploadService";
+import { supportedFormats } from "@/lib/supportedFiles";
 import { CloudUpload } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-
-const supportedFormats = [".MD", ".PDF", ".PNG", ".JPG", ".HTML"];
 
 // TODO: Handle Drag & Drop functionality, file validation, and actual upload logic
 export default function UploadPage() {
@@ -72,10 +71,10 @@ export default function UploadPage() {
           <div className="flex flex-wrap justify-center gap-2 mt-4">
             {supportedFormats.map((format) => (
               <span
-                key={format}
+                key={format.name}
                 className="bg-secondary-fixed-dim text-xs font-bold uppercase text-on-surface px-3 py-1"
               >
-                {format}
+                {format.name}
               </span>
             ))}
           </div>

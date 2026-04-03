@@ -5,6 +5,7 @@ import { useAuth } from "./features/auth/useAuth";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import HomePage from "./pages/HomePage";
+import { ProfilePage } from "./pages/ProfilePage";
 
 function ProtectedRoute() {
   const { isAuthenticated } = useAuth();
@@ -13,11 +14,7 @@ function ProtectedRoute() {
     return <Navigate to="/login" replace />;
   }
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 }
 
 export default function AppRoute() {
@@ -27,6 +24,7 @@ export default function AppRoute() {
         <Route path="/" element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route index element={<HomePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>
         <Route element={<AuthLayout />}>

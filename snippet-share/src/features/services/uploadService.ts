@@ -2,6 +2,8 @@ import apiClient from "../common/apiClient";
 import type ApiResponse from "../common/apiResponse";
 import { loadUserData } from "../models/user";
 
+export const FileStatus = { PRIVATE: "PRIVATE", PUBLISHED: "PUBLISHED" };
+
 export interface UserProfileData {
   id: string;
   name: string;
@@ -23,6 +25,8 @@ export interface FileData {
   accessed: Date;
 
   createdAt: Date;
+
+  status: string;
 }
 
 interface FileUploadResponse {
@@ -33,7 +37,15 @@ interface FileUploadResponse {
   success: boolean;
   errorMessage: string | null;
 }
+interface PublishFile {
+  id: string;
+  shortURL: string;
+  appFile: FileData;
+}
 export default class UserService {
+  static async publishFile(fileId: string): Promise<ApiResponse<PublishFile>> {
+    return await apiClient.post<PublishFile>(`/users/files/${fileId}/publish`);
+  }
   static async uploadFiles(
     files: File[],
   ): Promise<ApiResponse<FileUploadResponse[]>> {
@@ -45,12 +57,14 @@ export default class UserService {
     files.forEach((file) => formData.append("files", file));
 
     const res = await apiClient.post<FileUploadResponse[]>(
-      `/users/${user.id}/upload`,
+      `/users/upload`,
       formData,
     );
     console.log("Upload response:", res);
+
     return res;
   }
+
   static getUserProfile = async (): Promise<ApiResponse<UserProfileData>> => {
     const res = await apiClient.get<UserProfileData>(
       `/users/${loadUserData()?.id}`,
@@ -58,4 +72,9 @@ export default class UserService {
 
     return res;
   };
+
+  static async deleteFile(fileId: string): Promise<boolean> {
+    const res = await apiClient.delete(`/users/files/${fileId}`);
+    return res.ok;
+  }
 }

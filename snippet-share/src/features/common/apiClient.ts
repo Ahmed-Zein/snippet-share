@@ -31,17 +31,21 @@ class ApiClient {
     return response.json();
   }
 
-  async post<T>(endpoint: string, data: unknown): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
     const isFormData = data instanceof FormData;
-    console.log(data);
+    const jwtToken = AppStorage.get(StorageKey.AUTH_TOKEN);
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${jwtToken || ""}`,
+    };
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json";
+    }
 
     const response = await fetch(url, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${AppStorage.get(StorageKey.AUTH_TOKEN) || ""}`,
-      },
-      body: isFormData ? data : JSON.stringify(data),
+      headers: headers,
+      body: data ? (isFormData ? data : JSON.stringify(data)) : undefined,
     });
 
     // if (!response.ok) {
@@ -51,6 +55,21 @@ class ApiClient {
     logRequest(endpoint, response.status);
     console.log("Raw response:", response);
     return response.json();
+  }
+  async delete(endpoint: string): Promise<Response> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const jwtToken = AppStorage.get(StorageKey.AUTH_TOKEN);
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${jwtToken || ""}`,
+    };
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: headers,
+    });
+
+    logRequest(endpoint, response.status);
+    return response;
   }
 }
 

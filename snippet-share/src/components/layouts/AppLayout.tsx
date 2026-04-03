@@ -1,11 +1,6 @@
 import { useAuth } from "@/features/auth/useAuth";
-import {
-  LibraryBigIcon,
-  LogOut,
-  UploadCloudIcon,
-  UserCircle,
-} from "lucide-react";
-import { Outlet } from "react-router";
+import { LibraryBigIcon, LogOut, User, UserCircle } from "lucide-react";
+import { NavLink, Outlet } from "react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +14,10 @@ import {
   SidebarProvider,
 } from "../ui/sidebar";
 
+const navItems = [
+  { title: "Liberary", url: "/", icon: LibraryBigIcon },
+  { title: "Upload", url: "/profile", icon: User },
+];
 function AppSidebar() {
   const { user } = useAuth();
   return (
@@ -26,27 +25,26 @@ function AppSidebar() {
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Snippet-Share</SidebarGroupLabel>
           <SidebarMenu>
-            {/* UPLOAD BUTTON */}
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <UploadCloudIcon />
-                <span>Upload</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            {/* LIBRARY BUTTON */}
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <LibraryBigIcon />
-                <span>Liberary</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            {navItems.map((item) => (
+              <NavLink
+                to={item.url}
+                key={item.url}
+                className={({ isActive }) => (isActive ? "bg-primary/10" : "")}
+              >
+                <SidebarMenuItem>
+                  <SidebarMenuButton>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </NavLink>
+            ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {/* TODO: Navigate to profile page */}
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xs bg-primary-container items-center justify-center flex">
             <span className="">{user?.name.charAt(0).toUpperCase()}</span>
