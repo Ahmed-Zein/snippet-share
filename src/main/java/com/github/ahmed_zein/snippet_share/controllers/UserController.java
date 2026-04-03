@@ -4,6 +4,7 @@ import com.github.ahmed_zein.snippet_share.Services.AppFileServices;
 import com.github.ahmed_zein.snippet_share.Services.AppUserService;
 import com.github.ahmed_zein.snippet_share.dto.ApiResponse;
 import com.github.ahmed_zein.snippet_share.dto.FileUploadResponse;
+import com.github.ahmed_zein.snippet_share.dto.PublishedFileDto;
 import com.github.ahmed_zein.snippet_share.dto.UserProfileDto;
 import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,8 @@ public class UserController {
 
 
     @PostMapping("/files/{fileId}/publish")
-    public ResponseEntity<byte[]> publishFile(@PathVariable("userProfileId") UUID userProfileId) {
-        return ResponseEntity.internalServerError().build();
+    public ResponseEntity<ApiResponse<PublishedFileDto>> publishFile(@PathVariable("fileId") UUID fileId, @AuthenticationPrincipal AppUserPrincipal currentUser) {
+        var publishedFile = fileServices.publish(currentUser.user().getId(), fileId);
+        return ResponseEntity.ok(ApiResponse.ok(publishedFile));
     }
 }

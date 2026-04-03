@@ -12,8 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "publishedUrl")
-public class PublishedUrl {
+@Table(name = "publishedFile")
+public class PublishedFile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

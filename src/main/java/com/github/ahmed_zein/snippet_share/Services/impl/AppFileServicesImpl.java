@@ -1,21 +1,19 @@
 package com.github.ahmed_zein.snippet_share.Services.impl;
 
 import com.github.ahmed_zein.snippet_share.Services.AppFileServices;
-import com.github.ahmed_zein.snippet_share.Services.AuthService;
 import com.github.ahmed_zein.snippet_share.Services.FileStoreService;
-import com.github.ahmed_zein.snippet_share.Services.JwtService;
-import com.github.ahmed_zein.snippet_share.dto.*;
+import com.github.ahmed_zein.snippet_share.Services.UrlShortener;
+import com.github.ahmed_zein.snippet_share.dto.FileUploadResponse;
+import com.github.ahmed_zein.snippet_share.dto.PublishedFileDto;
+import com.github.ahmed_zein.snippet_share.mappers.AppFileMapper;
+import com.github.ahmed_zein.snippet_share.mappers.PublishedFilesMapper;
 import com.github.ahmed_zein.snippet_share.models.AppFile;
-import com.github.ahmed_zein.snippet_share.models.AppRoles;
-import com.github.ahmed_zein.snippet_share.models.AppUser;
-import com.github.ahmed_zein.snippet_share.models.AppUserPrincipal;
+import com.github.ahmed_zein.snippet_share.models.PublishedFile;
 import com.github.ahmed_zein.snippet_share.repositories.AppFileRepository;
 import com.github.ahmed_zein.snippet_share.repositories.AppUserRepository;
+import com.github.ahmed_zein.snippet_share.repositories.PublishedFileRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +27,11 @@ import java.util.UUID;
 public class AppFileServicesImpl implements AppFileServices {
     private final AppUserRepository userRepository;
     private final AppFileRepository fileRepository;
+    private final PublishedFileRepository publishedFileRepository;
     private final FileStoreService fileStoreService;
+    private final UrlShortener urlShortener;
+    private final AppFileMapper appFileMapper;
+    private final PublishedFilesMapper publishedFilesMapper;
 
     @Override
     @Transactional
@@ -40,16 +42,8 @@ public class AppFileServicesImpl implements AppFileServices {
         user.addFile(appFile);
         fileStoreService.save(appFile.getPath(), file);
 
-        userRepository.save(user);
-
-        return FileUploadResponse
-                .builder()
-                .success(true)
-                .fileSize(appFile.getSize())
-                .fileType(appFile.getContentType())
-                .fileName(appFile.getOriginalFileName())
-                .url(appFile.getPath())
-                .build();
+//        userRepository.save(user);
+        return appFileMapper.toFileUploadResponse(fileRepository.save(appFile));
     }
 
     @Override
@@ -84,45 +78,17 @@ public class AppFileServicesImpl implements AppFileServices {
         }
     }
 
-    @Service
-    @RequiredArgsConstructor
-    public static class AuthServiceImpl implements AuthService {
+    @Override
+    public PublishedFileDto publish(UUID userId, UUID fileId) {
+        var file = fileRepository.findByIdAndAppUser_IdAndIsDeletedFalse(fileId, userId).orElseThrow();
+        var shortUrl = urlShortener.shorten(fileId);
+        var publishedFile = PublishedFile.builder()
+                .shortURL(shortUrl)
+                .appFile(file)
+                .build();
 
-        private final AppUserRepository appUserRepository;
-        private final PasswordEncoder passwordEncoder;
-        private final JwtService jwtService;
-        private final AuthenticationManager authenticationManager;
-
-        @Override
-        public AuthResponse register(SignupRequest request) {
-            var user = AppUser.builder().name(request.name()).email(request.email()).password(passwordEncoder.encode(request.password())).role(AppRoles.USER).build();
-
-            appUserRepository.save(user);
-
-            var jwt = jwtService.generateToken(new AppUserPrincipal(user));
-
-            return AuthResponse.builder()
-                    .user(AppUserDto.builder()
-                            .id(user.getId()).email(user.getEmail()).name(user.getName())
-                            .build()
-                    )
-                    .token(jwt).build();
-        }
-
-        @Override
-        public AuthResponse authenticate(LoginRequest request) {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-
-            var user = appUserRepository.findByEmailIgnoreCase(request.email()).orElseThrow();
-
-            var jwt = jwtService.generateToken(new AppUserPrincipal(user));
-
-            return AuthResponse.builder()
-                    .user(AppUserDto.builder()
-                            .id(user.getId()).email(user.getEmail()).name(user.getName())
-                            .build()
-                    )
-                    .token(jwt).build();
-        }
+        return publishedFilesMapper.toDto(publishedFileRepository.save(publishedFile));
     }
+
+
 }
