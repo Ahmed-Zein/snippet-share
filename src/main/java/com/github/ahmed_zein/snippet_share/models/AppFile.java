@@ -51,6 +51,11 @@ public class AppFile {
 
     private LocalDateTime deletedAt;
 
+    @Builder.Default
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    public AppFileStatus status = AppFileStatus.PRIVATE;
+
     public static AppFile fromFile(MultipartFile file, AppUser user) {
         return AppFile.builder()
                 .appUser(user)

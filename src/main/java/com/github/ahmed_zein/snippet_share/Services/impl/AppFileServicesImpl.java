@@ -8,12 +8,14 @@ import com.github.ahmed_zein.snippet_share.dto.PublishedFileDto;
 import com.github.ahmed_zein.snippet_share.mappers.AppFileMapper;
 import com.github.ahmed_zein.snippet_share.mappers.PublishedFilesMapper;
 import com.github.ahmed_zein.snippet_share.models.AppFile;
+import com.github.ahmed_zein.snippet_share.models.AppFileStatus;
 import com.github.ahmed_zein.snippet_share.models.PublishedFile;
 import com.github.ahmed_zein.snippet_share.repositories.AppFileRepository;
 import com.github.ahmed_zein.snippet_share.repositories.AppUserRepository;
 import com.github.ahmed_zein.snippet_share.repositories.PublishedFileRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,7 +44,6 @@ public class AppFileServicesImpl implements AppFileServices {
         user.addFile(appFile);
         fileStoreService.save(appFile.getPath(), file);
 
-//        userRepository.save(user);
         return appFileMapper.toFileUploadResponse(fileRepository.save(appFile));
     }
 
@@ -87,7 +88,19 @@ public class AppFileServicesImpl implements AppFileServices {
                 .appFile(file)
                 .build();
 
+        file.status= AppFileStatus.PUBLISHED;
+        fileRepository.save(file);
         return publishedFilesMapper.toDto(publishedFileRepository.save(publishedFile));
+    }
+
+    @Override
+    public Resource getPublishedFile(String shortUrl) {
+        var publishedFile = publishedFileRepository.findByShortURL(shortUrl).orElseThrow();
+        try {
+            return fileStoreService.download(publishedFile.getAppFile().getPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

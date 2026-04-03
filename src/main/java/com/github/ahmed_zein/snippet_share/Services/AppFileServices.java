@@ -2,6 +2,7 @@ package com.github.ahmed_zein.snippet_share.Services;
 
 import com.github.ahmed_zein.snippet_share.dto.FileUploadResponse;
 import com.github.ahmed_zein.snippet_share.dto.PublishedFileDto;
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,4 +19,6 @@ public interface AppFileServices {
     boolean deleteFile(UUID userId, UUID fileId);
 
     PublishedFileDto publish(UUID userId, UUID fileId);
+
+    Resource getPublishedFile(String shortUrl);
 }

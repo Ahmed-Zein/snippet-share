@@ -1,5 +1,6 @@
 package com.github.ahmed_zein.snippet_share.dto;
 
+import com.github.ahmed_zein.snippet_share.models.AppFileStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,5 @@ public class FileUploadResponse {
     @Builder.Default
     private boolean success=true;
     private String errorMessage;
+    private AppFileStatus status;
 }
