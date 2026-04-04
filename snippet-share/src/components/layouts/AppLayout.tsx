@@ -1,5 +1,5 @@
 import { useAuth } from "@/features/auth/useAuth";
-import { LibraryBigIcon, LogOut, User, UserCircle } from "lucide-react";
+import { LibraryBigIcon, LogOut, Upload, UserCircle } from "lucide-react";
 import { NavLink, Outlet } from "react-router";
 import {
   Sidebar,
@@ -15,23 +15,28 @@ import {
 } from "../ui/sidebar";
 
 const navItems = [
-  { title: "Liberary", url: "/", icon: LibraryBigIcon },
-  { title: "Upload", url: "/profile", icon: User },
+  { title: "My Files", url: "/", icon: LibraryBigIcon },
+  { title: "Upload", url: "/upload", icon: Upload },
 ];
+
 function AppSidebar() {
   const { user } = useAuth();
+
   return (
     <Sidebar>
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Snippet-Share</SidebarGroupLabel>
+          <SidebarGroupLabel>Snippet Share</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => (
               <NavLink
                 to={item.url}
+                end={item.url === "/"}
                 key={item.url}
-                className={({ isActive }) => (isActive ? "bg-primary/10" : "")}
+                className={({ isActive }) =>
+                  isActive ? "bg-primary/10" : ""
+                }
               >
                 <SidebarMenuItem>
                   <SidebarMenuButton>
@@ -46,12 +51,14 @@ function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xs bg-primary-container items-center justify-center flex">
-            <span className="">{user?.name.charAt(0).toUpperCase()}</span>
+          <div className="w-8 h-8 rounded-xs bg-orange-600 items-center justify-center flex">
+            <span className="text-white text-sm font-semibold">
+              {user?.name.charAt(0).toUpperCase()}
+            </span>
           </div>
           <div className="flex flex-col items-start">
             <p className="font-light text-sm">{user?.name}</p>
-            <p className="text-xs text-on-surface-variant">{user?.email}</p>
+            <p className="text-xs text-sidebar-foreground/60">{user?.email}</p>
           </div>
         </div>
       </SidebarFooter>
@@ -65,10 +72,10 @@ export function AppLayout() {
     <SidebarProvider>
       <AppSidebar />
       <main className="flex-1 justify-center items-start overflow-y-auto bg-surface-bright p-18">
-        <nav className="flex text-on-surface-variant  justify-end gap-x-12 m-0 pb-8">
-          <UserCircle />
+        <nav className="flex text-on-surface-variant justify-end gap-x-6 m-0 pb-8">
+          <UserCircle className="cursor-pointer" />
           <LogOut
-            className="hover:text-on-surface cursor-pointer"
+            className="hover:text-red-500 cursor-pointer transition-colors"
             onClick={logout}
           />
         </nav>
@@ -77,3 +84,4 @@ export function AppLayout() {
     </SidebarProvider>
   );
 }
+

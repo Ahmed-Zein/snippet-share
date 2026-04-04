@@ -1,21 +1,28 @@
+import { Link } from "react-router";
 import { Search, Shield } from "lucide-react";
 
 export default function AuthPageTemplate({
   children,
+  mode,
 }: {
   children: React.ReactNode;
+  mode: "login" | "signup";
 }) {
+  const isLogin = mode === "login";
+
   return (
-    <div className="grid-cols-2 flex  border border-e-primary">
+    <div className="grid-cols-2 flex border border-e-primary">
       <BrandingSection />
       <section className="flex md:w-[45%] bg-on-secondary text-white p-20 flex-col justify-between">
         <div className="w-full max-w-md space-y-8">
           <header>
             <h2 className="text-3xl font-bold text-zinc-900">
-              Access the Archives
+              {isLogin ? "Access the Archives" : "Join the Archives"}
             </h2>
             <p className="text-zinc-500 mt-2">
-              Enter your credentials to manage your collection.
+              {isLogin
+                ? "Enter your credentials to manage your collection."
+                : "Create an account to start sharing snippets."}
             </p>
           </header>
           {children}
@@ -32,10 +39,13 @@ export default function AuthPageTemplate({
           </div>
 
           <p className="text-center text-sm text-zinc-600">
-            New archivist?{" "}
-            <button className="font-bold text-primary-container">
-              Sign up
-            </button>
+            {isLogin ? "New archivist?" : "Already have an account?"}{" "}
+            <Link
+              to={isLogin ? "/signup" : "/login"}
+              className="font-bold text-primary-container hover:underline"
+            >
+              {isLogin ? "Sign up" : "Log in"}
+            </Link>
           </p>
         </div>
       </section>
