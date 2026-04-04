@@ -21,4 +21,6 @@ public interface AppFileServices {
     PublishedFileDto publish(UUID userId, UUID fileId);
 
     Resource getPublishedFile(String shortUrl);
+
+    PublishedFileDto getPublishedFileInfo(String shortUrl);
 }

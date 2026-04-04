@@ -88,7 +88,7 @@ public class AppFileServicesImpl implements AppFileServices {
                 .appFile(file)
                 .build();
 
-        file.status= AppFileStatus.PUBLISHED;
+        file.status = AppFileStatus.PUBLISHED;
         fileRepository.save(file);
         return publishedFilesMapper.toDto(publishedFileRepository.save(publishedFile));
     }
@@ -103,5 +103,9 @@ public class AppFileServicesImpl implements AppFileServices {
         }
     }
 
-
+    @Override
+    public PublishedFileDto getPublishedFileInfo(String shortUrl) {
+        var publishedFile = publishedFileRepository.findByShortURL(shortUrl).orElseThrow();
+        return publishedFilesMapper.toDto(publishedFile);
+    }
 }

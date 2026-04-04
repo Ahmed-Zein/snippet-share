@@ -38,6 +38,8 @@ app:
       - /webjars/**
       - /api/public/**
       - /api/auth/**
+      - /pub/**
     jwt:
       secret: a-random-long-and-strong-secret-key
       expiration: 86400000  # 24 hours in milliseconds
+

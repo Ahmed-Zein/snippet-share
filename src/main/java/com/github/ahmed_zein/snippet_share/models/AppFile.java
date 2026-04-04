@@ -15,46 +15,35 @@ import java.util.UUID;
 @Entity
 @Table(name = "files")
 public class AppFile {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private AppUser appUser;
-
-    @Column(nullable = false)
-    private String originalFileName;
-
-    @Column(nullable = false)
-    private Long size;
-
-    // should I prevent duplicates and optimize space based on this? (no file updates, soft deletes will help)???
-    @Column(nullable = false)
-    private String checksum;
-
-    @Column(nullable = false)
-    private String contentType;
-
-    @Column(nullable = false, unique = true)
-    private String path;
-
-    @Column(nullable = false)
-    private LocalDateTime accessed;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean isDeleted = false;
-
-    private LocalDateTime deletedAt;
-
     @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     public AppFileStatus status = AppFileStatus.PRIVATE;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private AppUser appUser;
+    @Column(nullable = false)
+    private String originalFileName;
+    @Column(nullable = false)
+    private Long size;
+    // should I prevent duplicates and optimize space based on this? (no file updates, soft deletes will help)???
+    @Column(nullable = false)
+    private String checksum;
+    @Column(nullable = false)
+    private String contentType;
+    @Column(nullable = false, unique = true)
+    private String path;
+    @Column(nullable = false)
+    private LocalDateTime accessed;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isDeleted = false;
+    private LocalDateTime deletedAt;
 
     public static AppFile fromFile(MultipartFile file, AppUser user) {
         return AppFile.builder()

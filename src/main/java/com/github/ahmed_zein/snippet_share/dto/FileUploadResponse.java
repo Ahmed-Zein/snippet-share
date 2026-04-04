@@ -18,7 +18,7 @@ public class FileUploadResponse {
     private String contentType;
     private long size;
     @Builder.Default
-    private boolean success=true;
+    private boolean success = true;
     private String errorMessage;
     private AppFileStatus status;
 }
