@@ -44,6 +44,8 @@ public class AppFile {
     @Builder.Default
     private boolean isDeleted = false;
     private LocalDateTime deletedAt;
+    @OneToOne(mappedBy = "appFile")
+    private PublishedFile publishedFile;
 
     public static AppFile fromFile(MultipartFile file, AppUser user) {
         return AppFile.builder()

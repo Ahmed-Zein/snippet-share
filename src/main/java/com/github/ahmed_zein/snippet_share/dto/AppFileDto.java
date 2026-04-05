@@ -30,4 +30,5 @@ public class AppFileDto {
 
     private AppFileStatus status;
 
+    private PublishedFileInfo publishedFile;
 }

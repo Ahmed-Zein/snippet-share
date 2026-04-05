@@ -6,7 +6,7 @@ import com.github.ahmed_zein.snippet_share.models.AppFile;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {PublishedFilesMapper.class})
 public interface AppFileMapper {
     AppFile fromDto(AppFileDto fileDto);
 

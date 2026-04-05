@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,13 +20,13 @@ public class PublishedFilesController {
     private final AppFileServices appFileServices;
 
     @GetMapping(path = "/{shortUrl}/info")
-    public ResponseEntity<PublishedFileDto> getFileInfo(@PathParam("shortUrl") String shortUrl) {
+    public ResponseEntity<PublishedFileDto> getFileInfo(@PathVariable("shortUrl") String shortUrl) {
         var info = appFileServices.getPublishedFileInfo(shortUrl);
         return ResponseEntity.ok(info);
     }
 
     @GetMapping(path = "/{shortUrl}")
-    public ResponseEntity<Resource> getFile(@PathParam("shortUrl") String shortUrl) {
+    public ResponseEntity<Resource> getFile(@PathVariable("shortUrl") String shortUrl) {
         var file = appFileServices.getPublishedFile(shortUrl);
         var info = appFileServices.getPublishedFileInfo(shortUrl);
 
