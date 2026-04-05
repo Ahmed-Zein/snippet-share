@@ -16,7 +16,7 @@ import {
   Loader2,
   Table,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 
 // ── Content Type Routing ──
@@ -169,9 +169,19 @@ function HtmlViewer({ url }: { url: string }) {
     />
   );
 }
+import javascript from "highlight.js/lib/languages/javascript";
+import typescript from "highlight.js/lib/languages/typescript";
+import java from "highlight.js/lib/languages/java";
+import python from "highlight.js/lib/languages/python";
+import go from "highlight.js/lib/languages/go";
 
 function CodeViewer({ text, fileName }: { text: string; fileName: string }) {
   const ext = fileName.split(".").pop()?.toLowerCase() ?? "plaintext";
+  hljs.registerLanguage("javascript", javascript);
+  hljs.registerLanguage("go", go);
+  hljs.registerLanguage("typescript", typescript);
+  hljs.registerLanguage("java", java);
+  hljs.registerLanguage("python", python);
 
   const highlighted = useMemo(() => {
     return hljs.getLanguage(ext)
