@@ -14,6 +14,7 @@ export interface AppFileDto {
   accessed: string;
   createdAt: string;
   status: FileStatus;
+  publishedFile: PublishedFileInfo | null;
 }
 
 export interface UserProfileDto {
@@ -38,6 +39,10 @@ export interface PublishedFileDto {
   shortURL: string;
   appFile: AppFileDto;
 }
+export interface PublishedFileInfo {
+  id: string;
+  shortURL: string;
+}
 
 // ── Helpers ──
 
@@ -61,11 +66,15 @@ export function formatDate(iso: string): string {
 // ── Service ──
 
 export default class UserService {
-  static async getUserProfile(userId: string): Promise<ApiResponse<UserProfileDto>> {
+  static async getUserProfile(
+    userId: string,
+  ): Promise<ApiResponse<UserProfileDto>> {
     return apiClient.get<UserProfileDto>(`/users/${userId}`);
   }
 
-  static async uploadFiles(files: File[]): Promise<ApiResponse<FileUploadResponse[]>> {
+  static async uploadFiles(
+    files: File[],
+  ): Promise<ApiResponse<FileUploadResponse[]>> {
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
     return apiClient.post<FileUploadResponse[]>("/users/upload", formData);
@@ -76,7 +85,9 @@ export default class UserService {
     return res.ok;
   }
 
-  static async publishFile(fileId: string): Promise<ApiResponse<PublishedFileDto>> {
+  static async publishFile(
+    fileId: string,
+  ): Promise<ApiResponse<PublishedFileDto>> {
     return apiClient.post<PublishedFileDto>(`/users/files/${fileId}/publish`);
   }
 }

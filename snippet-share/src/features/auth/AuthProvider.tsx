@@ -7,6 +7,7 @@ import { AuthService } from "./AuthService";
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
+  signup: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -27,9 +28,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const authService = useMemo(() => new AuthService(), []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    const user = await authService.login(email, password);
-    setUser(user);
-    return !!user;
+    try {
+      const user = await authService.login(email, password);
+      setUser(user);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const signup = async (name: string, email: string, password: string): Promise<boolean> => {
+    try {
+      const user = await authService.signup(name, email, password);
+      setUser(user);
+      return true;
+    } catch (err) {
+      return false;
+    }
   };
 
   const logout = () => {
@@ -39,7 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated: !!user }}
+      value={{ user, login, signup, logout, isAuthenticated: !!user }}
     >
       {children}
     </AuthContext.Provider>

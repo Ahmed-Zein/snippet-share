@@ -1,191 +1,17 @@
+import CopyButton from "@/components/app/CopyButton";
+import FileCard from "@/components/app/FileCard";
+import { getFileIcon } from "@/components/app/utils";
 import { useAuth } from "@/features/auth/useAuth";
 import UserService, {
   type AppFileDto,
   type UserProfileDto,
-  formatDate,
-  formatFileSize
+  formatFileSize,
 } from "@/features/services/uploadService";
-import { supportedFormats } from "@/lib/supportedFiles";
-import {
-  Copy,
-  ExternalLink,
-  FileIcon,
-  Link2,
-  Loader2,
-  MoreHorizontal,
-  Share2,
-  Trash2,
-  X
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ExternalLink, Loader2, Share2, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-// ── Helpers ──
-
-function getFileIcon(contentType: string) {
-  const match = supportedFormats.find((f) => f.contentType === contentType);
-  return match ? <match.icon className="w-5 h-5" /> : <FileIcon className="w-5 h-5" />;
-}
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      toast.success("Link copied to clipboard");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error("Failed to copy");
-    }
-  };
-
-  return (
-    <button
-      onClick={handleCopy}
-      className="p-1.5 rounded-md hover:bg-white/10 transition-colors"
-      title="Copy link"
-    >
-      {copied ? (
-        <span className="text-xs font-medium text-green-400">Copied!</span>
-      ) : (
-        <Copy className="w-4 h-4 text-zinc-400" />
-      )}
-    </button>
-  );
-}
-
-// ── File Card ──
-
-function FileCard({
-  file,
-  onPublish,
-  onDelete,
-}: {
-  file: AppFileDto;
-  onPublish: (file: AppFileDto) => void;
-  onDelete: (fileId: string) => void;
-}) {
-  const [busy, setBusy] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [menuOpen]);
-
-  const handleDelete = async () => {
-    setMenuOpen(false);
-    setBusy(true);
-    const ok = await UserService.deleteFile(file.id);
-    setBusy(false);
-    if (ok) {
-      toast.success("File deleted");
-      onDelete(file.id);
-    } else {
-      toast.error("Failed to delete file");
-    }
-  };
-
-  const handleQuickShare = () => {
-    onPublish(file);
-  };
-
-  return (
-    <div className="relative bg-white rounded-xl border border-zinc-100 hover:border-orange-200 hover:shadow-sm transition-all group">
-      {/* Top: file type icon area */}
-      <div className="flex items-center justify-center h-24 bg-zinc-50 rounded-t-xl border-b border-zinc-100">
-        <div className="text-zinc-400">{getFileIcon(file.contentType)}</div>
-      </div>
-
-      {/* Bottom: file info */}
-      <div className="p-4">
-        <p className="text-sm font-medium text-zinc-900 truncate" title={file.originalFileName}>
-          {file.originalFileName}
-        </p>
-        <div className="flex items-center gap-2 mt-1.5">
-          <span className="text-xs text-zinc-500">{formatFileSize(file.size)}</span>
-          <span className="text-xs text-zinc-300">&middot;</span>
-          <span className="text-xs text-zinc-500">{formatDate(file.createdAt)}</span>
-        </div>
-
-        {/* Actions row */}
-        <div className="flex items-center justify-between mt-3">
-          {file.status === "PUBLISHED" ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-50 text-green-700 border border-green-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-              Shared
-            </span>
-          ) : (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-zinc-100 text-zinc-600 border border-zinc-200">
-              Private
-            </span>
-          )}
-
-          <div className="flex items-center gap-1">
-            {/* Primary share button — always visible */}
-            <button
-              onClick={handleQuickShare}
-              disabled={busy || file.status === "PUBLISHED"}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-orange-600 text-white hover:bg-orange-700 shadow-sm"
-              title="Share this file"
-            >
-              {file.status === "PUBLISHED" ? (
-                <>
-                  <Link2 className="w-3 h-3" />
-                  Shared
-                </>
-              ) : busy ? (
-                <Loader2 className="w-3 h-3 animate-spin" />
-              ) : (
-                <>
-                  <Share2 className="w-3 h-3" />
-                  Share
-                </>
-              )}
-            </button>
-
-            {/* Secondary: more menu (delete, etc.) */}
-            <div className="relative" ref={menuRef}>
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                disabled={busy}
-                className="p-1.5 rounded-lg hover:bg-zinc-100 transition-colors text-zinc-400 hover:text-zinc-600"
-                title="More actions"
-              >
-                <MoreHorizontal className="w-4 h-4" />
-              </button>
-
-              {menuOpen && (
-                <div className="absolute right-0 bottom-full mb-1 w-40 bg-white rounded-lg shadow-lg border border-zinc-200 py-1 z-10">
-                  <button
-                    onClick={handleDelete}
-                    disabled={busy}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    Delete
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Publish Modal ──
-
 function PublishModal({
   file,
   onConfirm,
@@ -374,10 +200,10 @@ export function ProfilePage() {
                 files: prev.files.map((f) =>
                   f.id === publishTarget.id
                     ? { ...f, status: "PUBLISHED" as const }
-                    : f
+                    : f,
                 ),
               }
-            : prev
+            : prev,
         );
       } else {
         toast.error("Failed to publish file");
@@ -391,7 +217,9 @@ export function ProfilePage() {
 
   const handleDeleteLocal = (fileId: string) => {
     setProfile((prev) =>
-      prev ? { ...prev, files: prev.files.filter((f) => f.id !== fileId) } : prev
+      prev
+        ? { ...prev, files: prev.files.filter((f) => f.id !== fileId) }
+        : prev,
     );
   };
 
@@ -413,7 +241,10 @@ export function ProfilePage() {
         <hr className="border-zinc-200" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="rounded-xl border border-zinc-100 overflow-hidden">
+            <div
+              key={i}
+              className="rounded-xl border border-zinc-100 overflow-hidden"
+            >
               <div className="h-24 bg-zinc-100 animate-pulse" />
               <div className="p-4 space-y-2">
                 <div className="h-4 w-3/4 bg-zinc-100 rounded animate-pulse" />

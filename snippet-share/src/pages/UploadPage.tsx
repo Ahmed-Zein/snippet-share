@@ -1,17 +1,14 @@
 import UserService, {
-  formatFileSize,
-  type FileUploadResponse,
+  formatFileSize
 } from "@/features/services/uploadService";
 import { supportedFormats } from "@/lib/supportedFiles";
 import {
-  CheckCircle2,
   CloudUpload,
   FileIcon,
   Loader2,
-  Plus,
-  X,
+  X
 } from "lucide-react";
-import { useCallback, type DragEvent, useRef, useState } from "react";
+import { useCallback, useRef, useState, type DragEvent } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
