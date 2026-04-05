@@ -7,6 +7,7 @@ import SignupPage from "./pages/auth/SignupPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import UploadPage from "./pages/UploadPage";
 import FileViewerPage from "./pages/public/FileViewerPage";
+import SimpleLayout from "./components/layouts/PublicLayout";
 
 function ProtectedRoute() {
   const { isAuthenticated } = useAuth();
@@ -23,7 +24,9 @@ export default function AppRoute() {
     <BrowserRouter>
       <Routes>
         {/* Public routes (no auth) */}
-        <Route path="/s/:shortUrl" element={<FileViewerPage />} />
+        <Route path="/s" element={<SimpleLayout />}>
+          <Route path=":shortUrl" element={<FileViewerPage />} />
+        </Route>
 
         {/* Protected routes */}
         <Route path="/" element={<ProtectedRoute />}>

@@ -1,12 +1,32 @@
-import { fetchPublicFileInfo, fetchPublicFileBlob, type PublicFileInfo } from "@/features/services/publicFileService";
-import { formatFileSize, formatDate } from "@/features/services/uploadService";
-import { ArrowLeft, Code, Download, FileText, Image, Loader2, Table, FileCode } from "lucide-react";
+import {
+  fetchPublicFileBlob,
+  fetchPublicFileInfo,
+  type PublicFileInfo,
+} from "@/features/services/publicFileService";
+import { formatDate, formatFileSize } from "@/features/services/uploadService";
+import {
+  ArrowLeft,
+  Code,
+  Download,
+  FileCode,
+  FileText,
+  Image,
+  Loader2,
+  Table,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
 
 // ── Content Type Routing ──
 
-type ViewerType = "image" | "pdf" | "markdown" | "csv" | "html" | "code" | "fallback";
+type ViewerType =
+  | "image"
+  | "pdf"
+  | "markdown"
+  | "csv"
+  | "html"
+  | "code"
+  | "fallback";
 
 function getViewerType(contentType: string): ViewerType {
   if (contentType.startsWith("image/")) return "image";
@@ -14,7 +34,8 @@ function getViewerType(contentType: string): ViewerType {
   if (contentType === "text/markdown") return "markdown";
   if (contentType === "text/csv") return "csv";
   if (contentType === "text/html") return "html";
-  if (contentType.startsWith("text/") || contentType === "application/json") return "code";
+  if (contentType.startsWith("text/") || contentType === "application/json")
+    return "code";
   return "fallback";
 }
 
@@ -45,16 +66,34 @@ function PdfViewer({ url }: { url: string }) {
 function MarkdownViewer({ text }: { text: string }) {
   const html = useMemo(() => {
     // Basic markdown rendering (no external lib needed)
-    let rendered = text
-      .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold mt-5 mb-2 text-zinc-800">$1</h3>')
-      .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-800">$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mt-6 mb-3 text-zinc-900">$1</h1>')
+    const rendered = text
+      .replace(
+        /^### (.+)$/gm,
+        '<h3 class="text-lg font-semibold mt-5 mb-2 text-zinc-800">$1</h3>',
+      )
+      .replace(
+        /^## (.+)$/gm,
+        '<h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-800">$1</h2>',
+      )
+      .replace(
+        /^# (.+)$/gm,
+        '<h1 class="text-2xl font-bold mt-6 mb-3 text-zinc-900">$1</h1>',
+      )
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.+?)\*/g, "<em>$1</em>")
-      .replace(/`([^`]+)`/g, '<code class="bg-zinc-100 text-orange-600 px-1.5 py-0.5 rounded text-sm font-mono">$1</code>')
-      .replace(/^> (.+)$/gm, '<blockquote class="border-l-3 border-orange-400 pl-4 text-zinc-600 italic my-3">$1</blockquote>')
+      .replace(
+        /`([^`]+)`/g,
+        '<code class="bg-zinc-100 text-orange-600 px-1.5 py-0.5 rounded text-sm font-mono">$1</code>',
+      )
+      .replace(
+        /^> (.+)$/gm,
+        '<blockquote class="border-l-3 border-orange-400 pl-4 text-zinc-600 italic my-3">$1</blockquote>',
+      )
       .replace(/^- (.+)$/gm, '<li class="ml-4 text-zinc-700">$1</li>')
-      .replace(/^(\d+)\. (.+)$/gm, '<li class="ml-4 text-zinc-700 list-decimal">$2</li>')
+      .replace(
+        /^(\d+)\. (.+)$/gm,
+        '<li class="ml-4 text-zinc-700 list-decimal">$2</li>',
+      )
       .replace(/\n/g, "<br />");
     return rendered;
   }, [text]);
@@ -72,10 +111,11 @@ function MarkdownViewer({ text }: { text: string }) {
 function CsvViewer({ text }: { text: string }) {
   const { headers, rows } = useMemo(() => {
     const lines = text.trim().split("\n");
-    if (lines.length === 0) return { headers: [] as string[], rows: [] as string[][] };
+    if (lines.length === 0)
+      return { headers: [] as string[], rows: [] as string[][] };
 
     const parsed = lines.map((line) =>
-      line.split(",").map((cell) => cell.trim().replace(/^"|"$/g, ""))
+      line.split(",").map((cell) => cell.trim().replace(/^"|"$/g, "")),
     );
     return { headers: parsed[0], rows: parsed.slice(1) };
   }, [text]);
@@ -86,7 +126,10 @@ function CsvViewer({ text }: { text: string }) {
         <thead className="bg-zinc-50 border-b border-zinc-200">
           <tr>
             {headers.map((h, i) => (
-              <th key={i} className="px-4 py-3 font-semibold text-zinc-700 whitespace-nowrap">
+              <th
+                key={i}
+                className="px-4 py-3 font-semibold text-zinc-700 whitespace-nowrap"
+              >
                 {h}
               </th>
             ))}
@@ -94,9 +137,15 @@ function CsvViewer({ text }: { text: string }) {
         </thead>
         <tbody>
           {rows.map((row, ri) => (
-            <tr key={ri} className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+            <tr
+              key={ri}
+              className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors"
+            >
               {row.map((cell, ci) => (
-                <td key={ci} className="px-4 py-2.5 text-zinc-600 whitespace-nowrap">
+                <td
+                  key={ci}
+                  className="px-4 py-2.5 text-zinc-600 whitespace-nowrap"
+                >
                   {cell}
                 </td>
               ))}
@@ -141,7 +190,8 @@ function FallbackViewer({ info }: { info: PublicFileInfo }) {
         {info.appFile.originalFileName}
       </p>
       <p className="text-sm text-zinc-500 mb-6">
-        This file type ({info.appFile.contentType}) cannot be previewed in the browser.
+        This file type ({info.appFile.contentType}) cannot be previewed in the
+        browser.
       </p>
       <a
         href={`${window.location.origin}/pub/${info.shortURL}`}
@@ -192,7 +242,9 @@ function ErrorState({ message }: { message: string }) {
 export default function FileViewerPage() {
   const { shortUrl } = useParams<{ shortUrl: string }>();
   const [info, setInfo] = useState<PublicFileInfo | null>(null);
-  const [fileContent, setFileContent] = useState<{ type: "blob"; url: string } | { type: "text"; text: string } | null>(null);
+  const [fileContent, setFileContent] = useState<
+    { type: "blob"; url: string } | { type: "text"; text: string } | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -210,7 +262,11 @@ export default function FileViewerPage() {
 
         const viewerType = getViewerType(fileInfo.appFile.contentType);
 
-        if (viewerType === "image" || viewerType === "pdf" || viewerType === "html") {
+        if (
+          viewerType === "image" ||
+          viewerType === "pdf" ||
+          viewerType === "html"
+        ) {
           // For binary formats, create an object URL
           return fetchPublicFileBlob(shortUrl).then(({ blob }) => {
             if (cancelled) return;
@@ -249,14 +305,15 @@ export default function FileViewerPage() {
     };
   }, [fileContent]);
 
-  if (loading) return <SimpleLayout><LoadingState /></SimpleLayout>;
-  if (error || !info) return <SimpleLayout><ErrorState message={error || undefined} /></SimpleLayout>;
+  if (loading) return <LoadingState />;
+  if (error || !info)
+    return <ErrorState message={error || "An error occurred."} />;
 
   const viewerType = getViewerType(info.appFile.contentType);
   const file = info.appFile;
 
   return (
-    <SimpleLayout>
+    <>
       {/* File header */}
       <div className="flex flex-col gap-4 mb-8">
         <div className="flex items-center justify-between">
@@ -265,9 +322,14 @@ export default function FileViewerPage() {
               <ViewerIcon type={viewerType} />
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-zinc-900 truncate">{file.originalFileName}</h1>
+              <h1 className="text-lg font-bold text-zinc-900 truncate">
+                {file.originalFileName}
+              </h1>
               <p className="text-sm text-zinc-500">
-                {formatFileSize(file.size)} · {formatDate(info.id ? file.createdAt : new Date().toISOString())}
+                {formatFileSize(file.size)} ·{" "}
+                {formatDate(
+                  info.id ? file.createdAt : new Date().toISOString(),
+                )}
               </p>
             </div>
           </div>
@@ -294,56 +356,40 @@ export default function FileViewerPage() {
 
       {fileContent?.type === "text" && (
         <>
-          {viewerType === "markdown" && <MarkdownViewer text={fileContent.text} />}
+          {viewerType === "markdown" && (
+            <MarkdownViewer text={fileContent.text} />
+          )}
           {viewerType === "csv" && <CsvViewer text={fileContent.text} />}
-          {viewerType === "code" && <CodeViewer text={fileContent.text} fileName={file.originalFileName} />}
+          {viewerType === "code" && (
+            <CodeViewer
+              text={fileContent.text}
+              fileName={file.originalFileName}
+            />
+          )}
         </>
       )}
 
       {viewerType === "fallback" && <FallbackViewer info={info} />}
-    </SimpleLayout>
-  );
-}
-
-// ── Layout wrapper (no sidebar, no auth) ──
-
-function SimpleLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-zinc-50">
-      {/* Top bar */}
-      <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-zinc-200">
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link to="/" className="text-base font-bold text-zinc-900 tracking-tight">
-            Snippet Share
-          </Link>
-          <Link
-            to="/"
-            className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Home
-          </Link>
-        </div>
-      </nav>
-
-      {/* Content */}
-      <main className="max-w-5xl mx-auto px-6 py-8">
-        {children}
-      </main>
-    </div>
+    </>
   );
 }
 
 // ── Icon helper ──
-
 function ViewerIcon({ type }: { type: ViewerType }) {
   switch (type) {
-    case "image": return <Image className="w-5 h-5" />;
-    case "pdf": return <FileText className="w-5 h-5" />;
-    case "markdown": return <FileText className="w-5 h-5" />;
-    case "csv": return <Table className="w-5 h-5" />;
-    case "html": return <FileCode className="w-5 h-5" />;
-    case "code": return <Code className="w-5 h-5" />;
-    default: return <FileText className="w-5 h-5" />;
+    case "image":
+      return <Image className="w-5 h-5" />;
+    case "pdf":
+      return <FileText className="w-5 h-5" />;
+    case "markdown":
+      return <FileText className="w-5 h-5" />;
+    case "csv":
+      return <Table className="w-5 h-5" />;
+    case "html":
+      return <FileCode className="w-5 h-5" />;
+    case "code":
+      return <Code className="w-5 h-5" />;
+    default:
+      return <FileText className="w-5 h-5" />;
   }
 }
