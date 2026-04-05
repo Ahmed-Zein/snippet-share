@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Search, Shield } from "lucide-react";
+import { Code2, Share2 } from "lucide-react";
 
 export default function AuthPageTemplate({
   children,
@@ -17,12 +17,12 @@ export default function AuthPageTemplate({
         <div className="w-full max-w-md space-y-8">
           <header>
             <h2 className="text-3xl font-bold text-zinc-900">
-              {isLogin ? "Access the Archives" : "Join the Archives"}
+              {isLogin ? "Welcome Back" : "Create Account"}
             </h2>
             <p className="text-zinc-500 mt-2">
               {isLogin
-                ? "Enter your credentials to manage your collection."
-                : "Create an account to start sharing snippets."}
+                ? "Enter your credentials to access your snippets."
+                : "Sign up to start sharing code snippets."}
             </p>
           </header>
           {children}
@@ -39,7 +39,7 @@ export default function AuthPageTemplate({
           </div>
 
           <p className="text-center text-sm text-zinc-600">
-            {isLogin ? "New archivist?" : "Already have an account?"}{" "}
+            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <Link
               to={isLogin ? "/signup" : "/login"}
               className="font-bold text-primary-container hover:underline"
@@ -73,25 +73,24 @@ function BrandingSection() {
     <section className="hidden md:flex md:w-[45%] bg-on-background text-white p-20 flex-col justify-between">
       <div>
         <h1 className="text-5xl font-bold leading-tight tracking-tight">
-          Preserving the{" "}
-          <span className="text-primary-container">intellectual capital</span>{" "}
-          of the next generation.
+          Share code{" "}
+          <span className="text-primary-container">snippets</span>{" "}
+          instantly.
         </h1>
         <p className="mt-8 text-xl text-zinc-400 max-w-md">
-          A high-fidelity archival system designed for technical teams,
-          researchers, and digital historians.
+          The easiest way to share and collaborate on code snippets with your team.
         </p>
       </div>
       <div className="space-y-8">
         <FeatureItem
-          icon={<Shield className="text-primary-container" />}
-          title="Immutable Storage"
-          desc="Content-addressed hashing ensures data integrity."
+          icon={<Code2 className="text-primary-container" />}
+          title="Syntax Highlighting"
+          desc="Support for 100+ programming languages."
         />
         <FeatureItem
-          icon={<Search className="text-primary-container" />}
-          title="Semantic Retrieval"
-          desc="Natural language search across all document types."
+          icon={<Share2 className="text-primary-container" />}
+          title="Easy Sharing"
+          desc="Share snippets via short URLs instantly."
         />
       </div>
     </section>

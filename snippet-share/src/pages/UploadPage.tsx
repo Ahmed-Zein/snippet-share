@@ -1,13 +1,6 @@
-import UserService, {
-  formatFileSize
-} from "@/features/services/uploadService";
+import UserService, { formatFileSize } from "@/features/services/uploadService";
 import { supportedFormats } from "@/lib/supportedFiles";
-import {
-  CloudUpload,
-  FileIcon,
-  Loader2,
-  X
-} from "lucide-react";
+import { CloudUpload, FileIcon, Loader2, X } from "lucide-react";
 import { useCallback, useRef, useState, type DragEvent } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -16,7 +9,11 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB, matches backend
 
 function getFileIcon(contentType: string) {
   const match = supportedFormats.find((f) => f.contentType === contentType);
-  return match ? <match.icon className="w-4 h-4" /> : <FileIcon className="w-4 h-4" />;
+  return match ? (
+    <match.icon className="w-4 h-4" />
+  ) : (
+    <FileIcon className="w-4 h-4" />
+  );
 }
 
 function getExtension(name: string) {
@@ -25,6 +22,7 @@ function getExtension(name: string) {
 }
 
 function isSupported(name: string) {
+  return true; // allowed for now, we can do more thorough checks in the backend and show per-file errors on upload results
   const ext = getExtension(name);
   return supportedFormats.some((f) => f.name.toLowerCase() === ext);
 }
@@ -50,37 +48,43 @@ export default function UploadPage() {
 
   // ── Helpers ──
 
-  const addFiles = useCallback((incoming: File[]) => {
-    const newFiles: QueuedFile[] = [];
+  const addFiles = useCallback(
+    (incoming: File[]) => {
+      const newFiles: QueuedFile[] = [];
 
-    for (const file of incoming) {
-      const id = `${file.name}-${file.size}-${file.lastModified}`;
+      for (const file of incoming) {
+        const id = `${file.name}-${file.size}-${file.lastModified}`;
 
-      // Duplicate check
-      if (queue.some((q) => q.id === id) || newFiles.some((q) => q.id === id)) {
-        toast.warning(`"${file.name}" is already in the queue`);
-        continue;
+        // Duplicate check
+        if (
+          queue.some((q) => q.id === id) ||
+          newFiles.some((q) => q.id === id)
+        ) {
+          toast.warning(`"${file.name}" is already in the queue`);
+          continue;
+        }
+
+        // Format check
+        if (!isSupported(file.name)) {
+          toast.error(`"${file.name}" is not a supported format`);
+          continue;
+        }
+
+        // Size check
+        if (file.size > MAX_FILE_SIZE) {
+          toast.error(`"${file.name}" exceeds the 10MB limit`);
+          continue;
+        }
+
+        newFiles.push({ file, id });
       }
 
-      // Format check
-      if (!isSupported(file.name)) {
-        toast.error(`"${file.name}" is not a supported format`);
-        continue;
+      if (newFiles.length > 0) {
+        setQueue((prev) => [...prev, ...newFiles]);
       }
-
-      // Size check
-      if (file.size > MAX_FILE_SIZE) {
-        toast.error(`"${file.name}" exceeds the 10MB limit`);
-        continue;
-      }
-
-      newFiles.push({ file, id });
-    }
-
-    if (newFiles.length > 0) {
-      setQueue((prev) => [...prev, ...newFiles]);
-    }
-  }, [queue]);
+    },
+    [queue],
+  );
 
   const removeFile = (id: string) => {
     setQueue((prev) => prev.filter((q) => q.id !== id));
@@ -191,9 +195,10 @@ export default function UploadPage() {
         onDrop={handleDrop}
         className={`
           relative cursor-pointer rounded-xl border-2 border-dashed transition-all duration-200
-          ${dragging
-            ? "border-orange-400 bg-orange-50 scale-[1.01]"
-            : "border-zinc-200 bg-zinc-50/50 hover:border-orange-300 hover:bg-orange-50/30"
+          ${
+            dragging
+              ? "border-orange-400 bg-orange-50 scale-[1.01]"
+              : "border-zinc-200 bg-zinc-50/50 hover:border-orange-300 hover:bg-orange-50/30"
           }
           ${uploading ? "pointer-events-none opacity-50" : ""}
         `}
@@ -202,7 +207,7 @@ export default function UploadPage() {
           ref={inputRef}
           type="file"
           multiple
-          accept={supportedFormats.map((f) => f.name.toLowerCase()).join(",")}
+          // accept={supportedFormats.map((f) => f.name.toLowerCase()).join(",")}
           onChange={handleInputChange}
           className="hidden"
         />
@@ -220,8 +225,7 @@ export default function UploadPage() {
               {dragging ? "Drop your files here" : "Drag & drop files here"}
             </p>
             <p className="text-sm text-zinc-500 mt-1">
-              or{" "}
-              <span className="text-orange-600 font-medium">browse</span>{" "}
+              or <span className="text-orange-600 font-medium">browse</span>{" "}
               from your computer
             </p>
           </div>
@@ -247,7 +251,8 @@ export default function UploadPage() {
             <h2 className="text-sm font-semibold text-zinc-700 uppercase tracking-wider">
               Queue
               <span className="ml-2 text-xs font-normal text-zinc-400 normal-case">
-                {queue.length} file{queue.length !== 1 ? "s" : ""} · {formatFileSize(queue.reduce((sum, q) => sum + q.file.size, 0))}
+                {queue.length} file{queue.length !== 1 ? "s" : ""} ·{" "}
+                {formatFileSize(queue.reduce((sum, q) => sum + q.file.size, 0))}
               </span>
             </h2>
             <button
@@ -262,7 +267,9 @@ export default function UploadPage() {
           <div className="space-y-2">
             {queue.map((item) => {
               const contentType = getContentType(item.file.name);
-              const ext = getExtension(item.file.name).toUpperCase().replace(".", "");
+              const ext = getExtension(item.file.name)
+                .toUpperCase()
+                .replace(".", "");
 
               return (
                 <div

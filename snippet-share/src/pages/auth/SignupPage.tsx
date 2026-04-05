@@ -59,7 +59,7 @@ export default function SignupPage() {
           </label>
           <Input
             type="email"
-            placeholder="archivist@institution.org"
+            placeholder="Enter your email"
             className="h-12 bg-zinc-50 border-zinc-200"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

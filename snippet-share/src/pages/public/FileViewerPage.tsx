@@ -4,6 +4,8 @@ import {
   type PublicFileInfo,
 } from "@/features/services/publicFileService";
 import { formatDate, formatFileSize } from "@/features/services/uploadService";
+import hljs from "highlight.js/lib/core";
+import "highlight.js/styles/github-dark.css";
 import {
   ArrowLeft,
   Code,
@@ -169,14 +171,25 @@ function HtmlViewer({ url }: { url: string }) {
 }
 
 function CodeViewer({ text, fileName }: { text: string; fileName: string }) {
+  const ext = fileName.split(".").pop()?.toLowerCase() ?? "plaintext";
+
+  const highlighted = useMemo(() => {
+    return hljs.getLanguage(ext)
+      ? hljs.highlight(text, { language: ext }).value
+      : hljs.highlightAuto(text).value;
+  }, [text, ext]);
+
   return (
     <div className="rounded-lg border border-zinc-200 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-zinc-800 text-zinc-400 text-xs">
         <span className="font-mono">{fileName}</span>
-        <span>plaintext</span>
+        <span className="font-mono">{ext}</span>
       </div>
       <pre className="p-4 bg-zinc-900 text-zinc-100 text-sm overflow-x-auto max-h-[65vh]">
-        <code className="font-mono">{text}</code>
+        <code
+          className="font-mono"
+          dangerouslySetInnerHTML={{ __html: highlighted }}
+        />
       </pre>
     </div>
   );
